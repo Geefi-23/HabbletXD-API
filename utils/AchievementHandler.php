@@ -1,4 +1,6 @@
 <?php
+require './Coins.php';
+
 class AchievementHandler{
   private function __construct(){}
 
@@ -25,11 +27,7 @@ class AchievementHandler{
       $query->execute();
       $coins = intval($query->fetch(PDO::FETCH_ASSOC)['premio_coins']);
 
-      $sql = "UPDATE usuarios SET coins = ? WHERE id = ?";
-      $query = $dbInstance->prepare($sql);
-      $query->bindValue(1, $coins, PDO::PARAM_INT);
-      $query->bindValue(2, $userId, PDO::PARAM_INT);
-      $query->execute();
+      Coins::add($dbInstance, $userId, $coins);
 
       return $coins;
     } else {

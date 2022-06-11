@@ -7,7 +7,7 @@
   $db = DataBase::getInstance();
 
   $url = $_GET['key'];
-  $sql = "SELECT n.id, n.titulo, n.resumo, c.nome AS `categoria`, n.imagem, 
+  $sql = "SELECT n.id, n.titulo, n.resumo, c.nome AS `categoria`, c.icone AS `categoria_icone`, n.imagem, 
       n.criador, n.data, n.url, n.visualizacao, n.texto
       FROM noticias AS n
       INNER JOIN noticias_cat AS c

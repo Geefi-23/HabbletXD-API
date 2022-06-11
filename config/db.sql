@@ -137,6 +137,17 @@ CREATE TABLE `forum_comentarios` (
   `data` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `compraveis` (
+  `id` int primary key auto_increment NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `tipo` varchar(100) NOT NULL,
+  `valor` float NOT NULL,
+  `promocao` enum('sim', 'nao') NOT NULL,
+  `imagem` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+insert into `compraveis`(nome, tipo, valor, promocao, imagem) values('Espelhin', 'mobi', 300, 'nao', '');
+
 insert into noticias(titulo, resumo, categoria, imagem, criador, url, texto, revisado, data, status, visualizacao, dia_evento, data_evento) 
 values('Receba noticia teste', 'Ja testou?', 1, '', 'geefi', 'nao tenho ctz', 'opa esta é uma super noticia de qualdade duvidosa', '', '1649961316', 'ativo', '', '', '');
 

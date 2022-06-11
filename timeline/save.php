@@ -75,7 +75,7 @@
   }
   
   $res;
-  if (AchievementHandler::saveAchievement($db, 3, $autor['id']))
+  if (AchievementHandler::saveAchievement($db, 3, $user['id']))
     $res = [ 'success' => 'A timeline foi salva com sucesso!', 'award' => "Você ganhou {$coins} coins por criar sua primeira timeline na HabbletXD!" ];
   else 
     $res = [ 'success' => 'A timeline foi salva com sucesso!' ];

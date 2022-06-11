@@ -2,9 +2,16 @@
   header('Access-Control-Allow-Headers: Content-Type, Set-Cookie');
   header('Access-Control-Allow-Origin: http://localhost:3000');
 
-  $data = file_get_contents('https://images.habblet.city/gamedata/habbletnew_furni.json');
-  if (!$data) 
-    return print(json_encode([ 'error' => 'Não foi possível carregar os mobis' ]));
-  
-  echo $data;
+  require '../config/DataBase.php';
+
+  $db = DataBase::getInstance();
+
+  $sql = "SELECT * FROM compraveis WHERE tipo = 'mobi'";
+  $query = $db->prepare($sql);
+  try{
+    $query->execute();
+  } catch (PDOException $e) {
+    return print(json_encode([ 'error' => 'Erro' ]));
+  }
+  echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
 ?>
