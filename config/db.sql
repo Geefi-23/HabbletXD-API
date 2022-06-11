@@ -1,4 +1,4 @@
-create table usuarios(
+create table if not exists usuarios(
   id int(11) auto_increment primary key not null,
   usuario varchar(255) not null,
   senha varchar(255) not null,
@@ -16,7 +16,7 @@ create table usuarios(
   coins int(11) not null default 0,
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `usuarios_conquistas` (
+CREATE TABLE if not exists `usuarios_conquistas` (
   `id` int primary key auto_increment NOT NULL,
   `usuario` int(11) not null,
   `conquista` int not null,
@@ -24,7 +24,7 @@ CREATE TABLE `usuarios_conquistas` (
   foreign key(conquista) references conquista(id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `conquistas` (
+CREATE TABLE if not exists `conquistas` (
   `id` int primary key auto_increment NOT NULL,
   `nome` varchar(255) not null,
   `premio_coins` int(11) not null  
@@ -33,7 +33,7 @@ CREATE TABLE `conquistas` (
 INSERT INTO `conquistas`(nome, premio_coins) VALUES
 ('Primeiro comentário', 10), ('Login diário', 10), ('Primeiro comentário em timeline', 5), ('Primeira timeline', 15);
 
-create table noticias(
+create table if not exists noticias(
   id int (11) primary key auto_increment not null,
   titulo varchar(255) not null,
   resumo varchar(255) not null,
@@ -52,7 +52,7 @@ create table noticias(
   fixo enum('sim', 'nao') not null
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table noticias_comentarios(
+create table if not exists noticias_comentarios(
   id int primary key auto_increment not null,
   id_noticia int not null,
   autor varchar(20) not null,
@@ -60,14 +60,14 @@ create table noticias_comentarios(
   data int not null
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table noticias_cat(
+create table if not exists noticias_cat(
   id int primary key auto_increment not null,
   nome varchar(255) not null,
   icone varchar(255) not null,
   status enum('ativo', 'inativo')
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table forum(
+create table if not exists forum(
   id int primary key auto_increment not null,
   titulo varchar(255) not null,
   categoria varchar(255) not null,
@@ -83,7 +83,7 @@ create table forum(
   ip varchar(255) not null
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE pixel (
+CREATE TABLE if not exists pixel (
   id int(11) primary key auto_increment NOT NULL,
   titulo varchar(255) NOT NULL,
   categoria int(11) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE pixel (
   tirinha enum('nao','sim') NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `pixel_comentarios` (
+CREATE TABLE if not exists `pixel_comentarios` (
   `id` int(11) primary key auto_increment NOT NULL,
   `id_pixel` int(11) NOT NULL,
   `autor` varchar(20) NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE `pixel_comentarios` (
   `data` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table pixel_cat(
+create table if not exists pixel_cat(
   id int primary key auto_increment not null,
   nome varchar(255) not null,
   icone varchar(255) not null,
@@ -129,7 +129,7 @@ insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, mode
   '192.168.0.1'
 );
 
-CREATE TABLE `forum_comentarios` (
+CREATE TABLE if not exists `forum_comentarios` (
   `id` int(11) primary key auto_increment NOT NULL,
   `id_forum` int(11) NOT NULL,
   `autor` varchar(20) NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE `forum_comentarios` (
   `data` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `compraveis` (
+CREATE TABLE if not exists `compraveis` (
   `id` int primary key auto_increment NOT NULL,
   `nome` varchar(255) NOT NULL,
   `tipo` varchar(100) NOT NULL,

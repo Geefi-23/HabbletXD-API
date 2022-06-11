@@ -1,7 +1,5 @@
 <?php
-
-  header('Access-Control-Allow-Origin: http://localhost:3000');
-  header('Access-Control-Allow-Header: Content-Type');
+  require '../utils/Headers.php';
 
   require '../config/DataBase.php';
   require '../utils/Token.php';

@@ -1,6 +1,5 @@
 <?php
-  header('Access-Control-Allow-Headers: Content-Type, Set-Cookie');
-  header('Access-Control-Allow-Origin: http://localhost:3000');
+  require '../utils/Headers.php';
 
   $datetime = new DateTime();
   $datetime->setTimezone(new DateTimeZone('America/Sao_Paulo'));

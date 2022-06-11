@@ -1,7 +1,5 @@
 <?php
-  header('Access-Control-Allow-Headers: Content-Type, Set-Cookie');
-  header('Access-Control-Allow-Origin: http://localhost:3000');
-  header('Access-Control-Allow-Credentials: true');
+  require '../utils/Headers.php';
 
   require '../config/DataBase.php';
   require '../utils/Token.php';
@@ -39,9 +37,8 @@
     echo $e->errorInfo;
   }
 
-  $auth = Token::create($result['id']);
+  $token = Token::create($result['id']);
   $user = [
-    "auth" => true,
     "usuario" => $result['usuario'],
     "twitter" => $result['twitter'],
     "avatar" => $result['avatar'],
@@ -59,6 +56,6 @@
   }
   $timelines = $query->fetchAll(PDO::FETCH_ASSOC);
 
-  header("Set-Cookie: hxd-auth={$auth}; path=/;");
+  header("Set-Cookie: __Host-habbletxd_auth={$token}; path=/; Secure; HttpOnly; expires="+time() + 3600 * 24 * 7); // expira em uma semana
   return print(json_encode([ 'success' => 'Logado!', 'user' => [ 'info' => $user, 'timelines' => $timelines ]]));
 ?>

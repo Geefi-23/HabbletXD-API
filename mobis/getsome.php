@@ -1,6 +1,5 @@
 <?php
-  header('Access-Control-Allow-Headers: Content-Type, Set-Cookie');
-  header('Access-Control-Allow-Origin: http://localhost:3000');
+  require '../utils/Headers.php';
 
   $furni = json_decode(file_get_contents('https://api.habboapi.net/furni'));
   if (!$furni) 

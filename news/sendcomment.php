@@ -1,15 +1,12 @@
 <?php
-  header('Access-Control-Allow-Headers: Content-Type, Set-Cookie');
-  header('Access-Control-Allow-Origin: http://localhost:3000');
-  header('Access-Control-Allow-Credentials: true');
+  require '../utils/Headers.php';
+  require '../utils/Authentication.php';
 
   require '../config/DataBase.php';
   require '../utils/Token.php';
   require '../utils/AchievementHandler.php';
 
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
-    return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
-  }
+  authenticate();
 
   $data = json_decode(file_get_contents('php://input'));
 
