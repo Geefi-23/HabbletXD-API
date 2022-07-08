@@ -1,3 +1,5 @@
+create database if not exists habbletxd character set utf8mb4 collate utf8mb4_ja_0900_as_cs;
+use habbletxd;
 create table if not exists usuarios(
   id int(11) auto_increment primary key not null,
   usuario varchar(255) not null,
@@ -13,7 +15,7 @@ create table if not exists usuarios(
   twitter varchar(255) default '@UniaoHabbo' not null,
   presenca int(255) not null,
   avatar varchar(255) default 'uploads/avatar.png',
-  coins int(11) not null default 0,
+  coins int(11) not null default 0
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE if not exists `usuarios_conquistas` (
@@ -29,9 +31,6 @@ CREATE TABLE if not exists `conquistas` (
   `nome` varchar(255) not null,
   `premio_coins` int(11) not null  
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-INSERT INTO `conquistas`(nome, premio_coins) VALUES
-('Primeiro comentário', 10), ('Login diário', 10), ('Primeiro comentário em timeline', 5), ('Primeira timeline', 15);
 
 create table if not exists noticias(
   id int (11) primary key auto_increment not null,
@@ -80,8 +79,28 @@ create table if not exists forum(
   url varchar(255) not null,
   fixo enum('sim', 'nao') not null,
   status enum('ativo', 'inativo') not null,
-  ip varchar(255) not null
+  ip varchar(255) not null,
+  visualizacao int not null,
+  likes int not null
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE forum_likes(
+  id int(11) primary key auto_increment not null,
+  usuario_id int not null,
+  forum_url varchar(255) not null
+);
+
+CREATE TABLE noticias_likes(
+  id int(11) primary key auto_increment not null,
+  usuario_id int not null,
+  noticia_url varchar(255) not null
+);
+
+CREATE TABLE pixel_likes(
+  id int(11) primary key auto_increment not null,
+  usuario_id int not null,
+  pixel_url varchar(255) not null
+);
 
 CREATE TABLE if not exists pixel (
   id int(11) primary key auto_increment NOT NULL,
@@ -114,6 +133,55 @@ create table if not exists pixel_cat(
   status enum('ativo', 'inativo')
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE if not exists `forum_comentarios` (
+  `id` int(11) primary key auto_increment NOT NULL,
+  `id_forum` int(11) NOT NULL,
+  `autor` varchar(20) NOT NULL,
+  `comentario` mediumtext NOT NULL,
+  `data` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE if not exists `compraveis` (
+  `id` int primary key auto_increment NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `tipo` enum('emblema', 'mobi', 'raro', 'visual') NOT NULL,
+  `valor` float NOT NULL,
+  `promocao` enum('sim', 'nao') NOT NULL,
+  `imagem` varchar(255) NOT NULL,
+  `gratis` enum('sim', 'nao') NOT NULL,
+  `data` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `valores` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) COLLATE utf8mb4_ja_0900_as_cs NOT NULL,
+  `categoria` int NOT NULL,
+  `imagem` varchar(255) COLLATE utf8mb4_ja_0900_as_cs NOT NULL,
+  `preco` varchar(255) COLLATE utf8mb4_ja_0900_as_cs NOT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_ja_0900_as_cs NOT NULL,
+  `moeda` varchar(255) not null,
+  `situacao` enum('Em alta', 'Estável', 'Baixa') not null,
+  `valorltd` varchar(255) not null,
+  PRIMARY KEY (`id`),
+  KEY `fk_cat` (`categoria`),
+  CONSTRAINT `fk_cat` FOREIGN KEY (`categoria`) REFERENCES `valores_cat` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_ja_0900_as_cs;
+
+CREATE TABLE IF NOT EXISTS presenca(
+  id int(11) primary key auto_increment not null,
+  codigo varchar(255) not null,
+  ativo varchar(255) not null,
+  data varchar(255) not null,
+  criador varchar(255) not null
+);
+
+CREATE TABLE IF NOT EXISTS presenca_usado(
+  id int(11) primary key auto_increment not null,
+  id_cod varchar(255) not null,
+  usuario varchar(255) not null,
+  data int(11) not null
+);
+
 insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, moderador, url, fixo, status, ip) values(
   'Primeira timeline!',
   'timeline',
@@ -129,24 +197,9 @@ insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, mode
   '192.168.0.1'
 );
 
-CREATE TABLE if not exists `forum_comentarios` (
-  `id` int(11) primary key auto_increment NOT NULL,
-  `id_forum` int(11) NOT NULL,
-  `autor` varchar(20) NOT NULL,
-  `comentario` mediumtext NOT NULL,
-  `data` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE if not exists `compraveis` (
-  `id` int primary key auto_increment NOT NULL,
-  `nome` varchar(255) NOT NULL,
-  `tipo` varchar(100) NOT NULL,
-  `valor` float NOT NULL,
-  `promocao` enum('sim', 'nao') NOT NULL,
-  `imagem` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-insert into `compraveis`(nome, tipo, valor, promocao, imagem) values('Espelhin', 'mobi', 300, 'nao', '');
+insert into `compraveis`(nome, tipo, valor, promocao, imagem, gratis, data) values('mergulhando', 'emblema', 300, 'nao', '', 'sim', 1650066187);
 
 insert into noticias(titulo, resumo, categoria, imagem, criador, url, texto, revisado, data, status, visualizacao, dia_evento, data_evento) 
 values('Receba noticia teste', 'Ja testou?', 1, '', 'geefi', 'nao tenho ctz', 'opa esta é uma super noticia de qualdade duvidosa', '', '1649961316', 'ativo', '', '', '');
@@ -154,8 +207,17 @@ values('Receba noticia teste', 'Ja testou?', 1, '', 'geefi', 'nao tenho ctz', 'o
 insert into noticias_comentarios(id_noticia, autor, comentario, data)
 values(1, 'geefi', 'Os comentários tbm funcionam, já testou?', 1649511402);
 
-insert into noticias_cat(nome, icone, status) values('Moda', '', 'ativo');
+insert into noticias_cat(nome, icone, status) values
+('Arquitetos', 'category_icon_architects.png', 'ativo'), ('Campanhas', 'category_icon_compaigns.png', 'ativo'), ('Competições', 'category_icon_competitions.png', 'ativo'),
+('Eventos', 'category_icon_events.png', 'ativo'), ('Externas', 'category_icon_externas.png', 'ativo'), ('Fan sites', 'category_icon_fansites.png', 'ativo'),
+('Coisas gratis', 'category_icon_freestuff.png', 'ativo'), ('HabbletXD', 'category_icon_habbletxd.gif', 'ativo'), ('Habbo hotel', 'category_icon_habbohotel.png', 'ativo'),
+('Novidades', 'category_icon_news.gif', 'ativo'), ('Reportagens', 'category_icon_reports.png', 'ativo');
 
 insert into pixel_cat(nome, icone, status) values
 ('Logotipo', '', 'ativo'),('Tirinha', '', 'ativo'),('Emoticon', '', 'ativo'),('Emblema', '', 'ativo'),('Webdesign', '', 'ativo'),('Banners', '', 'ativo'),
 ('Avatar', '', 'ativo'),('Assinatura', '', 'ativo'),('Outras artes', '', 'ativo');
+
+INSERT INTO `conquistas`(nome, premio_coins) VALUES
+('Primeiro comentário', 10), ('Login diário', 10), ('Primeiro comentário em timeline', 5), ('Primeira timeline', 15);
+
+INSERT INTO `valores_cat`(nome, imagem) values('Raro de pack', ''),('Raro de staff', ''),('Raro LTD', ''),('Raro de evento', '');

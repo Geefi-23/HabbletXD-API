@@ -1,21 +1,24 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
+  use Utils\DataBase;
 
   $db = DataBase::getInstance();
 
-  $sql = "SELECT * FROM pixel ORDER BY id DESC";
-  /*"SELECT n.*, c.nome AS `categoria_nome` 
-  FROM noticias AS n
-  INNER JOIN noticias_cat AS c
-  ON c.id = n.categoria
-  ORDER BY id DESC";*/
+  $sql = "SELECT p.*, c.nome AS `categoria_nome`, COUNT(pl.id) AS `likes`
+  FROM pixel AS p
+  INNER JOIN pixel_cat AS c
+  ON c.id = p.categoria
+  LEFT JOIN pixel_likes AS pl
+  ON p.url = pl.pixel_url
+  GROUP BY p.id
+  ORDER BY p.id DESC";
   $query = $db->prepare($sql);
   try{
     $query->execute();
   } catch (PDOException $e) {
-    return print(json_encode([ 'error' => 'Erro' ]));
+    return print(json_encode([ 'error' => $e->errorInfo ]));
   }
   echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
 ?>

@@ -1,7 +1,8 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
+  use Utils\DataBase;
 
   $db = DataBase::getInstance();
 
@@ -9,7 +10,7 @@
   $sql = '';
 
   if (isset($_GET['user'])) {
-    $sql = "SELECT * FROM forum WHERE autor = ? ORDER BY id DESC limit ?";
+    $sql = "SELECT * FROM forum WHERE autor = ? AND fixo = 'nao' ORDER BY id DESC limit ?";
     $query = $db->prepare($sql);
     $query->bindValue(1, $_GET['user']);
     $query->bindValue(2, $quantity, PDO::PARAM_INT);

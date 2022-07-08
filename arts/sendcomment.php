@@ -1,11 +1,12 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
-  require '../utils/AchievementHandler.php';
+  use Utils\Authenticate;
+  use Utils\DataBase;
+  use Utils\AchievementHandler;
 
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
+  if (!$user = Authenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
   }
 
@@ -13,18 +14,7 @@
 
   $db = DataBase::getInstance();
 
-  $userid = Token::decode($_COOKIE['hxd-auth'])[1]->sub;
-
-  $sql = "SELECT id, usuario FROM usuarios WHERE id = ?";
-  $query = $db->prepare($sql);
-  $query->bindValue(1, $userid);
-  try{
-    $query->execute();
-  } catch (PDOException $e) {
-    return print(json_encode([ 'error' => 'Não foi possível registrar o comentário.', 'details' => $e->errorInfo ]));
-  }
-
-  $autor = $query->fetch(PDO::FETCH_ASSOC);
+  $autor = $user['usuario'];
   $url = $data->url;
   $comentario = $data->comentario;
   $date = time();
@@ -48,7 +38,7 @@
   VALUES(?, ?, ?, ?)";
   $query = $db->prepare($sql);
   $query->bindValue(1, $news['id']);
-  $query->bindValue(2, $autor['usuario']);
+  $query->bindValue(2, $autor);
   $query->bindValue(3, $comentario);
   $query->bindValue(4, $date);
   try{
@@ -58,7 +48,7 @@
   }
 
   $res;
-  if ($coins = AchievementHandler::saveAchievement($db, 1, $autor['id']))
+  if ($coins = AchievementHandler::saveAchievement($db, 1, $user['id']))
     $res = [ 'success' => 'Comentário salvo com sucesso!', 'award' => "Você ganhou {$coins} coins por comentar pela primeira vez!!" ];
   else 
     $res = [ 'success' => 'Comentário salvo com sucesso!' ];

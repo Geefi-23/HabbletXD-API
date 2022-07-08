@@ -1,10 +1,11 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
+  
+  use Utils\Authenticate;
+  use Utils\DataBase;
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
-
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
+  if (!$user = Authenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
   }
 
@@ -12,11 +13,20 @@
 
   $db = DataBase::getInstance();
 
-  $id = $data->id;
+  $usuario = $user['usuario'];
+  $id_comentario = $data->id;
+
+  $sql = "SELECT autor FROM pixel_comentarios WHERE id = $id_comentario AND BINARY autor = '$usuario'";
+  $query = $db->prepare($sql);
+  $query->execute();
+  $result = $query->fetch();
+  
+  if (!$result)
+    return print(json_encode([ 'error' => 'Este comentário não existe ou você não tem permissão para deleta-lo.' ]));
 
   $sql = 'DELETE FROM pixel_comentarios WHERE id = ?';
   $query = $db->prepare($sql);
-  $query->bindValue(1, $id);
+  $query->bindValue(1, $id_comentario);
   try {
     $query->execute();
   } catch (PDOException $e) {

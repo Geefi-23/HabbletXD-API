@@ -1,11 +1,17 @@
 <?php
   require '../utils/Headers.php';
-  require '../utils/Authentication.php';
-  require '../config/DataBase.php';
-  require '../config/Token.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  if (!authenticate())
+  use Utils\DataBase;
+  use Utils\HPAuthenticate;
+
+  if (!$user = HPAuthenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
+  }
+  
+  if (!$user->hasPermission(1)) {
+    return print(json_encode([ 'error' => 'Você não tem permissão para realizar essa ação.' ]));
+  }
 
   $data = json_decode(file_get_contents('php://input'));
 

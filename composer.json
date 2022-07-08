@@ -1,0 +1,10 @@
+{
+    "name": "kuram/api",
+    "autoload": {
+        "psr-4": {
+            "Utils\\": "utils/",
+            "Entities\\": "entities/"
+        }
+    },
+    "require": {}
+}

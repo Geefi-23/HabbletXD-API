@@ -1,26 +1,34 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
+  use Utils\DataBase;
+  use Utils\Authenticate;
 
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
+  if (!$user = Authenticate::authenticate())
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
-  }
-
+    
   $data = json_decode(file_get_contents('php://input'));
 
   $db = DataBase::getInstance();
 
-  $id = $data->id;
+  $usuario = $user['usuario'];
+  $id_comentario = $data->id;
 
-  $sql = 'DELETE FROM forum_comentarios WHERE id = ?';
+  $sql = "SELECT autor FROM forum_comentarios WHERE id = $id_comentario AND BINARY autor = '$usuario'";
   $query = $db->prepare($sql);
-  $query->bindValue(1, $id);
+  $query->execute();
+  $result = $query->fetch();
+  
+  if (!$result)
+    return print(json_encode([ 'error' => 'Este comentário não existe ou você não tem permissão para deleta-lo.' ]));
+
+  $sql = "DELETE FROM forum_comentarios WHERE id = $id_comentario";
+  $query = $db->prepare($sql);
   try {
     $query->execute();
   } catch (PDOException $e) {
-    return print(json_encode([ 'error' => 'Não foi possível deletar este comentário', 'details' => $e->errorInfo ]));
+    return print(json_encode([ 'error' => $e->errorInfo ]));
   }
 
   echo json_encode([ 'success' => 'Comentário deletado com sucesso' ]);

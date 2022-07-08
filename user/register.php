@@ -1,10 +1,11 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
+  use Utils\Authenticate;
+  use Utils\DataBase;
 
-  if (isset($_COOKIE['hxd-auth']) && Token::isValid($_COOKIE['hxd-auth'])){
+  if (Authenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você já está autenticado!' ]));
   }
 
@@ -20,7 +21,7 @@
     return print(json_encode([ 'error' => 'Os dados foram digitados incorretamente' ]));
   }
   $db = DataBase::getInstance();
-  $sql = 'SELECT id FROM usuarios WHERE usuario = ?';
+  $sql = 'SELECT id FROM usuarios WHERE BINARY usuario = ?';
   $query = $db->prepare($sql);
   $query->bindValue(1, $usuario);
   try{

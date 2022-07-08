@@ -1,28 +1,18 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
-  require '../utils/MediaHandler.php';
+  use Utils\Authenticate;
+  use Utils\DataBase;
+  use Utils\MediaHandler;
 
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
+  if (!$user = Authenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
   }
 
   $db = DataBase::getInstance();
 
   $data = json_decode($_POST['json']);
-
-  $autorId = Token::decode($_COOKIE['hxd-auth'])[1]->sub;
-
-  $sql = "SELECT usuario FROM usuarios WHERE id = ".$autorId;
-  $query = $db->prepare($sql);
-  try {
-    $query->execute();
-  } catch (PDOException $e) {
-    return print(json_encode([ 'error' => $e->errorInfo ]));
-  }
-  $user = $query->fetch(PDO::FETCH_ASSOC);
 
   $titulo = $data->titulo;
   $categoria = $data->categoria;

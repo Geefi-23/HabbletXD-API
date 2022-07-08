@@ -1,7 +1,8 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
+  use Utils\DataBase;
 
   $db = DataBase::getInstance();
 
@@ -14,5 +15,5 @@
   }
   $categorias = $query->fetchAll(PDO::FETCH_ASSOC);
 
-  echo json_encode([ 'success' => 'Artes encontradas com sucesso!', 'categories' => $categorias ]);
+  echo json_encode($categorias);
 ?>

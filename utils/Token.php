@@ -1,4 +1,6 @@
 <?php
+  namespace Utils;
+  
   class Token{
     private const secretkey = 'ZWxtNGNoMDRBTEY0';
 
@@ -29,6 +31,7 @@
       return $token;
     }
     public static function isValid($token) {
+      if ($token === 'deleted' || $token === '') return false;
       $decoded = explode('.', $token);
       $header = $decoded[0];
       $payload = $decoded[1];

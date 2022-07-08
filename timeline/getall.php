@@ -1,11 +1,17 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
+  use Utils\DataBase;
 
   $db = DataBase::getInstance();
 
-  $sql = "SELECT * FROM forum ORDER BY id DESC";
+  $sql = "SELECT f.*, COUNT(distinct fl.id) AS likes FROM forum AS f
+        LEFT JOIN forum_likes AS fl
+        ON f.url = fl.forum_url
+        WHERE f.fixo = 'nao'
+        GROUP BY f.id
+        ORDER BY f.id DESC";
   $query = $db->prepare($sql);
   try{
     $query->execute();

@@ -1,7 +1,13 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
+  use Utils\Authenticate;
+  use Utils\DataBase;
+
+  if (!$user = Authenticate::authenticate()) {
+    return print(json_encode([ 'error' => 'Você não está autenticado' ]));
+  }
 
   $db = DataBase::getInstance();
 

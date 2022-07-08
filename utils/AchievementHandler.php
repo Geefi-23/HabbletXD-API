@@ -1,5 +1,9 @@
 <?php
-require './Coins.php';
+namespace Utils;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Utils\Coins;
 
 class AchievementHandler{
   private function __construct(){}
@@ -8,24 +12,24 @@ class AchievementHandler{
     // VERIFICA SE É A PRIMEIRA TIMELINE DESTE USUÁRIO
     $sql = "SELECT * FROM usuarios_conquistas WHERE usuario = ? AND conquista = {$achieveId}";
     $query = $dbInstance->prepare($sql);
-    $query->bindValue(1, $userId, PDO::PARAM_INT);
+    $query->bindValue(1, $userId, \PDO::PARAM_INT);
     try{
       $query->execute();
-    } catch (PDOException $e) {
+    } catch (\PDOException $e) {
       return print(json_encode([ 'error' => $e->errorInfo ]));
     }
 
     // ADICIONA OS COINS NA CONTA DO USUARIO E REGISTRA A CONQUISTA
-    if (empty($query->fetch())) {
+    if (!$query->fetch()) {
       $sql = "INSERT INTO usuarios_conquistas(usuario, conquista) VALUES(?, {$achieveId})";
       $query = $dbInstance->prepare($sql);
-      $query->bindValue(1, $userId, PDO::PARAM_INT);
+      $query->bindValue(1, $userId, \PDO::PARAM_INT);
       $query->execute();
 
       $sql = "SELECT premio_coins FROM conquistas WHERE id = {$achieveId}";
       $query = $dbInstance->prepare($sql);
       $query->execute();
-      $coins = intval($query->fetch(PDO::FETCH_ASSOC)['premio_coins']);
+      $coins = intval($query->fetch(\PDO::FETCH_ASSOC)['premio_coins']);
 
       Coins::add($dbInstance, $userId, $coins);
 

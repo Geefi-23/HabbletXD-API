@@ -1,25 +1,17 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
 
-  require '../config/DataBase.php';
-  require '../utils/Token.php';
-  require '../utils/AchievementHandler.php';
+  use Utils\Authenticate;
+  use Utils\DataBase;
+  use Utils\AchievementHandler;
 
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])){
+  if (!$user = Authenticate::authenticate())
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
-  }
+    
   $data = json_decode(file_get_contents('php://input'));
 
   $db = DataBase::getInstance();
-
-  $decodedToken = Token::decode($_COOKIE['hxd-auth']);
-  $userId = $decodedToken[1]->sub;
-
-  $sql = "SELECT * FROM usuarios WHERE id = ?";
-  $query = $db->prepare($sql);
-  $query->bindValue(1, $userId);
-  $query->execute();
-  $user = $query->fetch(PDO::FETCH_ASSOC);
 
   $titulo = '';
   $autor = $user['usuario'];
@@ -73,7 +65,7 @@
   }
   
   $res;
-  if (AchievementHandler::saveAchievement($db, 3, $user['id']))
+  if ($coins = AchievementHandler::saveAchievement($db, 3, $user['id']))
     $res = [ 'success' => 'A timeline foi salva com sucesso!', 'award' => "Você ganhou {$coins} coins por criar sua primeira timeline na HabbletXD!" ];
   else 
     $res = [ 'success' => 'A timeline foi salva com sucesso!' ];

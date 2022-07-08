@@ -1,10 +1,8 @@
 <?php
   require '../utils/Headers.php';
+  require __DIR__ . '/../vendor/autoload.php';
+  
+  use Utils\Authenticate;
 
-  require '../utils/Token.php';
-
-  if (!isset($_COOKIE['hxd-auth']) || !Token::isValid($_COOKIE['hxd-auth'])) {
-    return print(json_encode([ 'authenticated' => false ]));
-  }
-  return print(json_encode([ 'authenticated' => true ]));
+  print(json_encode([ 'authenticated' => Authenticate::authenticate() ]));
 ?>
