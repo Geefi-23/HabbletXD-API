@@ -27,11 +27,12 @@
 
   $date = time();
   $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-  $sql = 'UPDATE usuarios SET ultimo_data = ?, ultimo_ip = ? WHERE id = ?';
+  $sql = 'UPDATE usuarios SET ultimo_data = ?, ultimo_ip = ?, ultimo_dia = ? WHERE id = ?';
   $query = $db->prepare($sql);
   $query->bindValue(1, $date);
   $query->bindValue(2, $ip);
-  $query->bindValue(3, $result['id']);
+  $query->bindValue(3, time());
+  $query->bindValue(4, $result['id']);
   try {
     $query->execute();
   } catch (PDOException $e) {

@@ -10,7 +10,12 @@
   $sql = '';
 
   if (isset($_GET['user'])) {
-    $sql = "SELECT * FROM forum WHERE autor = ? AND fixo = 'nao' ORDER BY id DESC limit ?";
+    $sql = "SELECT f.*, COUNT(distinct fl.id) AS likes FROM forum AS f
+    LEFT JOIN forum_likes AS fl
+    ON f.url = fl.forum_url
+    WHERE f.fixo = 'nao' AND BINARY f.autor = ?
+    GROUP BY f.id
+    ORDER BY f.id DESC LIMIT ?";
     $query = $db->prepare($sql);
     $query->bindValue(1, $_GET['user']);
     $query->bindValue(2, $quantity, PDO::PARAM_INT);

@@ -18,8 +18,7 @@
 
   if ($result) {
     $resultid = (int) $result['id'];
-    $scheduleDeleteId = $resultid - 1;
-    $sql = "DELETE FROM hp_radio_horarios_marcados WHERE id = $scheduleDeleteId"; //deletando o horario que veio antes do locutor atual
+    $sql = "DELETE FROM hp_radio_horarios_marcados WHERE id < $resultid"; //deletando os horario que vieram antes do antes do locutor atual
     $query = $db->prepare($sql);
     $query->execute();
     echo json_encode($result);

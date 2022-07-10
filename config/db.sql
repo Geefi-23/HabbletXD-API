@@ -182,6 +182,8 @@ CREATE TABLE IF NOT EXISTS presenca_usado(
   data int(11) not null
 );
 
+alter table usuarios add column ultimo_dia varchar(255) not null;
+
 insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, moderador, url, fixo, status, ip) values(
   'Primeira timeline!',
   'timeline',

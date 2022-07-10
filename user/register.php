@@ -13,7 +13,6 @@
 
   $usuario = $data->nick;
   $senha = $data->senha;
-  $missao = $data->missao;
   $date = time();
   $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
@@ -27,25 +26,24 @@
   try{
     $query->execute();
   } catch (PDOException $e) {
-    return print(json_encode([ 'error' => 'Não foi possível fazer o registro.' ]));
+    return print(json_encode([ 'error' => $e->errorInfo ]));
   }
   if (!empty($query->fetch())){
     return print(json_encode([ 'error' => 'Esta conta já existe em nosso sistema!' ]));
   }
 
-  $sql = "INSERT INTO usuarios (usuario, senha, email, ultimo_data, ultimo_ip, dia_register, assinatura, missao, presenca) 
-  VALUES (?, ?, '', ?, ?, ?, 'Sem assinatura', ?, 0)";
+  $sql = "INSERT INTO usuarios (usuario, senha, email, ultimo_data, ultimo_ip, dia_register, assinatura, missao, presenca, ultimo_dia) 
+  VALUES (?, ?, '', ?, ?, ?, 'Sem assinatura', '', 0, '')";
   $query = $db->prepare($sql);
   $query->bindValue(1, $usuario);
   $query->bindValue(2, md5($senha));
   $query->bindValue(3, $date);
   $query->bindValue(4, $ip);
   $query->bindValue(5, $date);
-  $query->bindValue(6, $missao);
   try{
     $query->execute();
     echo json_encode([ 'success' => 'Você foi registrado com sucesso!' ]);
   } catch (PDOException $e) {
-    echo json_encode([ 'error' => 'Não foi possível fazer o registro.' ]);
+    echo json_encode([ 'error' => $e->errorInfo ]);
   }
 ?>

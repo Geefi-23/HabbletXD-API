@@ -41,16 +41,19 @@
     }
   }
 
-  $imgdir= '';
-
   if ($titulo == '' || $categoria == '' || empty($_FILES['arte'])){
     return print(json_encode([ 'error' => 'Algum dos campos não foi preenchido' ]));
   }
 
-  if (isset($_FILES['arte'])){
-    $imgdir = MediaHandler::save($_FILES['arte'], 'arts');
+  if (!isset($_FILES['arte'])){
+    return print(json_encode([ 'error' => 'Você não enviou nenhuma imagem' ]));
   }
 
+  $imgdir = MediaHandler::save($_FILES['arte'], 'arts');
+
+  if (!$imgdir) {
+    return print(json_encode([ 'error' => 'Não foi o possível salvar a sua arte. Verifique o formato da imagem.' ]));
+  }
   $sql = "INSERT INTO pixel (titulo, categoria, descricao, imagem, autor, data, url, status, width, height, ip, tirinha)
   VALUES(?, ?, ?, ?, ?, ?, ?, 'sim', '', '', ?, 'nao')";
   $query = $db->prepare($sql);
@@ -64,5 +67,5 @@
   $query->bindValue(8, $ip);
   $query->execute();
 
-  echo json_encode([ 'success' => 'Arte publicada com sucesso' ]);
+  echo json_encode([ 'success' => 'Arte publicada com sucesso', 'url' => $url ]);
 ?>

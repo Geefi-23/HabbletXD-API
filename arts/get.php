@@ -34,7 +34,7 @@
       ON c.id = p.categoria
       LEFT JOIN pixel_likes AS pl
       ON p.url = pl.pixel_url
-      WHERE p.url = ? AND p.status = 'sim'
+      WHERE BINARY p.url = ? AND p.status = 'sim'
       GROUP BY p.id";
   $query = $db->prepare($sql);
   $query->bindValue(1, $url);
