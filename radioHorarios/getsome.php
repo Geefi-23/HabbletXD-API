@@ -8,10 +8,10 @@
 
   $db = HPDataBase::getInstance();
   $sql = "SELECT hm.id, hm.usuario, DATE_FORMAT(h.comeca, '%H:%i') AS `comeca`, DATE_FORMAT(h.termina, '%H:%i') AS `termina` 
-  FROM hp_radio_horarios_marcados AS hm
-  INNER JOIN hp_radio_horarios AS h
-  ON hm.horario = h.id AND h.comeca > CURTIME()
-  WHERE hm.usuario != ''
+  FROM hp_radio_horarios AS h
+  LEFT JOIN hp_radio_horarios_marcados AS hm
+  ON hm.horario = h.id
+  WHERE h.comeca >= CURTIME()
   LIMIT $limit";
 
   $query = $db->prepare($sql);

@@ -9,7 +9,7 @@ class AchievementHandler{
   private function __construct(){}
 
   public static function saveAchievement($dbInstance, $achieveId, $userId) {
-    // VERIFICA SE É A PRIMEIRA TIMELINE DESTE USUÁRIO
+    
     $sql = "SELECT * FROM usuarios_conquistas WHERE usuario = ? AND conquista = {$achieveId}";
     $query = $dbInstance->prepare($sql);
     $query->bindValue(1, $userId, \PDO::PARAM_INT);

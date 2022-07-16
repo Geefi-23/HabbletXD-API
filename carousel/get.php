@@ -3,13 +3,10 @@
   require __DIR__ . '/../vendor/autoload.php';
 
   use Utils\DataBase;
-  
-  $data = json_decode(file_get_contents('php://input'));
-  
-  $value = $data->value;
 
   $db = DataBase::getInstance();
-  $sql = "SELECT id, usuario FROM usuarios WHERE usuario LIKE '%$value%'";
+
+  $sql = "SELECT id, imagem, destino FROM index_carousel";
   $query = $db->prepare($sql);
   $query->execute();
   $results = $query->fetchAll(PDO::FETCH_ASSOC);

@@ -16,7 +16,7 @@
   $date = time();
   $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
-  if (!preg_match('/^[A-Za-z0-9 ]{5,40}$/', $usuario) || !preg_match('/^[^\b]{6,16}$/', $senha)){
+  if (!preg_match('/^[^\b]{5,40}$/', $usuario) || !preg_match('/^[^\b]{6,16}$/', $senha)){
     return print(json_encode([ 'error' => 'Os dados foram digitados incorretamente' ]));
   }
   $db = DataBase::getInstance();

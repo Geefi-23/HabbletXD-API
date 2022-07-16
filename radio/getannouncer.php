@@ -9,20 +9,25 @@
   $sql = "SELECT hm.id, hm.usuario AS `nome`
           FROM hp_radio_horarios_marcados AS hm
           INNER JOIN hp_radio_horarios AS h
-          ON h.id = hm.horario AND h.comeca <= CURTIME() AND CURTIME() < h.termina
-          WHERE hm.dia = CURDATE()
+          ON h.id = hm.horario 
+          WHERE hm.dia = CURDATE() AND h.comeca <= CURTIME() AND CURTIME() < h.termina
           LIMIT 1";
   $query = $db->prepare($sql);
   $query->execute();
   $result = $query->fetch(PDO::FETCH_ASSOC);
 
+  $sql = "DELETE FROM hp_radio_horarios_marcados";
+
   if ($result) {
     $resultid = (int) $result['id'];
-    $sql = "DELETE FROM hp_radio_horarios_marcados WHERE id < $resultid"; //deletando os horario que vieram antes do antes do locutor atual
+    $sql .= " WHERE id < $resultid"; //deletando os horario que vieram antes do antes do locutor atual
     $query = $db->prepare($sql);
     $query->execute();
-    echo json_encode($result);
+
+    return print(json_encode($result));
   }
-  else
-    echo '{}';
+  $query = $db->prepare($sql);
+  $query->execute();
+
+  echo '{}';
 ?>

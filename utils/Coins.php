@@ -10,6 +10,8 @@ class Coins{
     $query->bindValue(1, $coins, \PDO::PARAM_INT);
     $query->bindValue(2, $userId, \PDO::PARAM_INT);
     $query->execute();
+
+    return $coins;
   }
 }
 ?>

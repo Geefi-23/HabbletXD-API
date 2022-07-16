@@ -1,7 +1,6 @@
 <?php
   require './vendor/autoload.php';
 
-  use Utils\MediaHandler;
+  echo '1657466633, um dia dps = '.(1657466633 + 60 * 60 * 24);
+  echo '<br>hoje: '.time()
 ?>
-
-<img src="/api/media/avatars/ZGVzZW52b2x2ZWRvci13ZWIuanBnZWt3ZDEicw.jpg" />

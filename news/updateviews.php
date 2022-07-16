@@ -33,6 +33,14 @@
   try {
     $query->execute();
   } catch (PDOException $e) {
-    print(json_encode([ 'error' => 'erro', 'details' => $e->errorInfo ]));
+    print(json_encode([ 'error' => $e->errorInfo ]));
   }
+
+  $sql = "INSERT IGNORE INTO noticias_lidos(usuario, noticia_lida) VALUES(?, ?)";
+  $query = $db->prepare($sql);
+  $query->bindValue(1, $user['id']);
+  $query->bindValue(2, $key);
+  $query->execute();
+  
+  echo '{}';
 ?>

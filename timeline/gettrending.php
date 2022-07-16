@@ -3,15 +3,19 @@
   require __DIR__ . '/../vendor/autoload.php';
 
   use Utils\DataBase;
-  
-  $data = json_decode(file_get_contents('php://input'));
-  
-  $value = $data->value;
+  use Utils\Authenticate;
 
   $db = DataBase::getInstance();
-  $sql = "SELECT id, usuario FROM usuarios WHERE usuario LIKE '%$value%'";
+
+  $user = isset($_GET['user']) ? $_GET['user'] : '%%';
+
+  $sql = "SELECT tag, COUNT(tag) AS count FROM forum_hashtags 
+  WHERE BINARY usuario LIKE ?
+  GROUP BY tag 
+  ORDER BY count DESC";
   $query = $db->prepare($sql);
-  $query->execute();
+  $query->execute([ $user ]);
   $results = $query->fetchAll(PDO::FETCH_ASSOC);
+  
   echo json_encode($results);
 ?>

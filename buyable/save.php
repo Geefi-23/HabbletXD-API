@@ -1,7 +1,5 @@
 <?php
-  header('Access-Control-Allow-Origin: https://localhost');
-  header('Access-Control-Allow-Headers: Set-Cookie, Content-Type');
-  header('Access-Control-Allow-Credentials: true');
+  require '../utils/Headers.php';
   require __DIR__ . '/../vendor/autoload.php';
 
   use Utils\DataBase;
@@ -29,6 +27,10 @@
   $valor = $data->valor;
   $time = time();
   $imagem = MediaHandler::save($_FILES['imagem'], 'buyables');
+
+  if (!$imagem) {
+    return print(json_encode([ 'error' => 'Não foi possivel salvar o comprável.' ]));
+  }
 
   $sql = "INSERT INTO `compraveis`(nome, tipo, valor, promocao, imagem, gratis, data) 
       VALUES(?, ?, ?, 'nao', ?, 'nao', ?)";

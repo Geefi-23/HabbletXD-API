@@ -8,18 +8,29 @@
 
   $likesql = "SELECT 
   u.usuario, 
-  (COUNT(fl.id) + COUNT(pl.id) + COUNT(nl.id)) AS `likes`
+  (COUNT(DISTINCT fl.id) + COUNT(DISTINCT pl.id) + COUNT(DISTINCT nl.id)) AS `likes`
   FROM usuarios AS u
   LEFT JOIN forum_likes AS fl ON fl.usuario_id = u.id
   LEFT JOIN pixel_likes AS pl ON pl.usuario_id = u.id
   LEFT JOIN noticias_likes AS nl ON nl.usuario_id = u.id
-  GROUP BY u.id 
+  GROUP BY u.id
   ORDER BY likes DESC LIMIT 4";
+  /*
+  SELECT 
+  u.usuario, 
+  COUNT(DISTINCT fl.id) + COUNT(DISTINCT pl.id) + COUNT(DISTINCT nl.id) AS `likes`
+  FROM usuarios AS u
+  LEFT JOIN forum_likes AS fl ON fl.usuario_id = u.id
+  LEFT JOIN pixel_likes AS pl ON pl.usuario_id = u.id
+  LEFT JOIN noticias_likes AS nl ON nl.usuario_id = u.id
+  GROUP BY u.id
+  ORDER BY likes DESC LIMIT 4
+   */
   $likesqry = $db->prepare($likesql);
   $likesqry->execute();
   $likes = $likesqry->fetchAll(\PDO::FETCH_ASSOC);
 
-  $comentariosql = "SELECT u.usuario, (COUNT(fc.id) + COUNT(pc.id) + COUNT(nc.id)) AS `comentarios`
+  $comentariosql = "SELECT u.usuario, (COUNT(DISTINCT fc.id) + COUNT(DISTINCT pc.id) + COUNT(DISTINCT nc.id)) AS `comentarios`
   FROM usuarios AS u
   LEFT JOIN forum_comentarios AS fc ON BINARY fc.autor = u.usuario
   LEFT JOIN pixel_comentarios AS pc ON BINARY pc.autor = u.usuario
@@ -30,7 +41,7 @@
   $comentariosqry->execute();
   $comentarios = $comentariosqry->fetchAll(\PDO::FETCH_ASSOC);
 
-  $presencasql = "SELECT u.usuario, COUNT(pu.id) AS `presencas`
+  $presencasql = "SELECT u.usuario, COUNT(DISTINCT pu.id) AS `presencas`
   FROM usuarios AS u
   LEFT JOIN presenca_usado AS pu ON BINARY pu.usuario = u.usuario
   GROUP BY u.id 

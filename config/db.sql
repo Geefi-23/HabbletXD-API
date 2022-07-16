@@ -150,7 +150,7 @@ CREATE TABLE if not exists `compraveis` (
   `imagem` varchar(255) NOT NULL,
   `gratis` enum('sim', 'nao') NOT NULL,
   `data` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+);
 
 CREATE TABLE `valores` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -182,6 +182,32 @@ CREATE TABLE IF NOT EXISTS presenca_usado(
   data int(11) not null
 );
 
+CREATE TABLE IF NOT EXISTS forum_hashtags(
+  id int primary key auto_increment not null,
+  usuario varchar(255) not null,
+  tag varchar(255) not null,
+  data varchar(255) not null
+);
+
+CREATE TABLE IF NOT EXISTS usuarios_comprados(
+  id int primary key auto_increment not null,
+  usuario varchar(255) not null,
+  item int not null
+);
+
+CREATE TABLE IF NOT EXISTS emblemas(
+  id int primary key auto_increment not null,
+  nome varchar(255) not null,
+  imagem varchar(255) not null,
+  tutorial varchar(255) null,
+  gratis enum('sim', 'nao') not null,
+  conquistado varchar(255) null,
+  usuarios_qtd int null,
+  codigo varchar(255) null
+);
+
+ALTER TABLE usuarios_comprados ADD CONSTRAINT fk_item FOREIGN KEY(item) REFERENCES compraveis(id);
+
 alter table usuarios add column ultimo_dia varchar(255) not null;
 
 insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, moderador, url, fixo, status, ip) values(
@@ -199,7 +225,7 @@ insert into forum(titulo, categoria, autor, texto, data, reviver, moderado, mode
   '192.168.0.1'
 );
 
-
+alter table forum add column hashtags varchar(255) null;
 
 insert into `compraveis`(nome, tipo, valor, promocao, imagem, gratis, data) values('mergulhando', 'emblema', 300, 'nao', '', 'sim', 1650066187);
 
@@ -219,7 +245,33 @@ insert into pixel_cat(nome, icone, status) values
 ('Logotipo', '', 'ativo'),('Tirinha', '', 'ativo'),('Emoticon', '', 'ativo'),('Emblema', '', 'ativo'),('Webdesign', '', 'ativo'),('Banners', '', 'ativo'),
 ('Avatar', '', 'ativo'),('Assinatura', '', 'ativo'),('Outras artes', '', 'ativo');
 
-INSERT INTO `conquistas`(nome, premio_coins) VALUES
-('Primeiro comentário', 10), ('Login diário', 10), ('Primeiro comentário em timeline', 5), ('Primeira timeline', 15);
+INSERT INTO `conquistas`(id, nome, premio_coins) VALUES
+('Primeiro comentário', 10), ('Login diário', 10), ('Primeiro comentário em timeline', 5), ('Primeira timeline', 15), (5, 'Primeira arte', 10);
 
 INSERT INTO `valores_cat`(nome, imagem) values('Raro de pack', ''),('Raro de staff', ''),('Raro LTD', ''),('Raro de evento', '');
+
+
+INSERT INTO usuarios_emblemas(usuario, emblema) VALUES(?, ?);
+
+alter table valores add column icone varchar(255) not null;
+
+CREATE TABLE noticias_lidos(
+  id int primary key auto_increment not null,
+  usuario int not null,
+  noticia_lida varchar(255) not null
+);
+
+CREATE TABLE usuarios_destaquesxd(
+  id int primary key auto_increment not null,
+  usuario varchar(255) not null,
+  motivo text not null,
+  key `fk_destacado` (usuario),
+  CONSTRAINT `fk_destacado` FOREIGN KEY (usuario) REFERENCES usuarios(usuario)
+) ENGINE=MyISAM AUTO_INCREMENT=383 DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE index_carousel(
+  id int primary key auto_increment not null,
+  imagem varchar(255) not null
+);
+
+ALTER TABLE usuarios ADD COLUMN artigo_delay varchar(255) not null;

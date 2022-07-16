@@ -14,7 +14,8 @@ class Authenticate {
       $db = DataBase::getInstance();
 
       $id = Token::decode($_COOKIE['__Host-habbletxd_auth'])[1]->sub;
-      $sql = "SELECT id, usuario, assinatura, missao, twitter, presenca, avatar, coins AS `xdcoins`, ultimo_dia
+      $sql = "SELECT id, usuario, assinatura, missao, twitter, presenca, avatar, coins AS `xdcoins`, ultimo_dia,
+      artigo_delay
       FROM usuarios WHERE id = $id";
       $query = $db->prepare($sql);
       $query->execute();
@@ -31,7 +32,7 @@ class Authenticate {
       $query->bindValue(1, $result['usuario']);
       try {
         $query->execute();
-      } catch (PDOException $e) {
+      } catch (\PDOException $e) {
         return print(json_encode([ 'error' => $e->errorInfo ]));
       }
       $cargo = $query->fetch(\PDO::FETCH_ASSOC);
@@ -44,7 +45,7 @@ class Authenticate {
 
       // award by login a day
       $yesterday = time() - 60 * 60 * 24;
-      if ((int) $result['ultimo_dia'] === $yesterday) {
+      if ((int) $result['ultimo_dia'] <= $yesterday) {
         Coins::add($db, $id, 5);
         $result['coins'] = ((int) $result['coins']) + 5;
         $sql = "UPDATE usuarios SET ultimo_dia = ? WHERE id = ?";

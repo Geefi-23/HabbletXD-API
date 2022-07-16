@@ -21,8 +21,24 @@
   $itemvalor = (int) $data->item->valor;
   $codigo = '';
   $discord = $data->discord;
+
+  $sql = "SELECT id FROM usuarios_comprados WHERE usuario = ? AND item = ?";
+  $query = $db->prepare($sql);
+  $query->bindValue(1, $user['usuario']);
+  $query->bindValue(2, $itemid, PDO::PARAM_INT);
+  $query->execute();
+  if ($query->fetch()) {
+    return print(json_encode([ 'error' => 'Você já possui este item.' ]));
+  }
+
   $sql = "UPDATE usuarios SET coins = CAST(coins AS UNSIGNED) - $itemvalor WHERE id = $userid";
   $query = $db->prepare($sql);
+  $query->execute();
+
+  $sql = "INSERT INTO usuarios_comprados(usuario, item) VALUES(?, ?);";
+  $query = $db->prepare($sql);
+  $query->bindValue(1, $user['usuario']);
+  $query->bindValue(2, $itemid, PDO::PARAM_INT);
   $query->execute();
 
   $sql = "INSERT INTO hp_compras(id_compravel, nome_compravel, codigo, discord_usuario)

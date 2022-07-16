@@ -5,9 +5,15 @@
   use Utils\Authenticate;
   use Utils\DataBase;
   use Utils\MediaHandler;
+  use Utils\Coins;
 
   if (!$user = Authenticate::authenticate()){
     return print(json_encode([ 'error' => 'Você não está autenticado!' ]));
+  }
+
+  if (time() < (int) $user['artigo_delay']) {
+    return print(
+      json_encode([ 'error' => "Você postou um artigo recentemente e precisa aguardar 10 minutos até postar outra." ]));
   }
 
   $db = DataBase::getInstance();
@@ -54,6 +60,7 @@
   if (!$imgdir) {
     return print(json_encode([ 'error' => 'Não foi o possível salvar a sua arte. Verifique o formato da imagem.' ]));
   }
+
   $sql = "INSERT INTO pixel (titulo, categoria, descricao, imagem, autor, data, url, status, width, height, ip, tirinha)
   VALUES(?, ?, ?, ?, ?, ?, ?, 'sim', '', '', ?, 'nao')";
   $query = $db->prepare($sql);
@@ -67,5 +74,15 @@
   $query->bindValue(8, $ip);
   $query->execute();
 
-  echo json_encode([ 'success' => 'Arte publicada com sucesso', 'url' => $url ]);
+  $sql = "UPDATE usuarios SET artigo_delay = ? WHERE id = ?";
+  $query = $db->prepare($sql);
+  $query->execute([ time() + (60 * 10), $user['id'] ]);
+
+  $res = [ 'success' => 'Arte publicada com sucesso', 'url' => $url ];
+  if ($coins = Coins::add($db, $user['id'], 10)) {
+    $res['award'] = "Você ganhou {$coins} coins por publicar a sua primeira arte na HabbletXD!";
+    $res['coins'] = $coins;
+  }
+
+  echo json_encode($res);
 ?>
